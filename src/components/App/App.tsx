@@ -1,5 +1,7 @@
 import { useState } from "react";
 import styles from "./App.module.css";
+import { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 import SearchBar from "../SearchBar/SearchBar";
 import MovieGrid from "../MovieGrid/MovieGrid";
@@ -25,7 +27,8 @@ export default function App() {
             const data = await fetchMovies(query);
 
             if (data.length === 0) {
-                alert("No movies found for your request.");
+                toast.error("No movies found for your request.");
+                return;
             }
 
             setMovies(data);
@@ -38,12 +41,24 @@ export default function App() {
 
     return (
         <div className={styles.app}>
+            <Toaster />
+
             <SearchBar onSubmit={handleSearch} />
 
             {loading && <Loader />}
+
             {error && <ErrorMessage />}
-            {movies.length > 0 && <MovieGrid movies={movies} onSelect={setSelectedMovie} />}
-            {selectedMovie && <MovieModal movie={selectedMovie} onClose={() => setSelectedMovie(null)} />}
+
+            {movies.length > 0 && (
+                <MovieGrid movies={movies} onSelect={setSelectedMovie} />
+            )}
+
+            {selectedMovie && (
+                <MovieModal
+                    movie={selectedMovie}
+                    onClose={() => setSelectedMovie(null)}
+                />
+            )}
         </div>
     );
 }
